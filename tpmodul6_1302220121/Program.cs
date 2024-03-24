@@ -15,7 +15,27 @@
 
         public void IncreasePlayCount(int count)
         {
-            this.playCount += count;
+            if (string.IsNullOrEmpty(title) || title.Length > 100)
+            {
+                throw new ArgumentException("Judul video tidak valid.");
+            }
+
+            if (count < 0 || count > 10000000)
+            {
+                throw new ArgumentException("Jumlah penambahan play count tidak valid.");
+            }
+
+            try
+            {
+                checked
+                {
+                    this.playCount += count;
+                }
+            }
+            catch (OverflowException ex)
+            {
+                Console.WriteLine("Terjadi overflow: " + ex.Message);
+            }
         }
 
         public void PrintVideoDetails()
@@ -31,7 +51,19 @@
         string videoTitle = "Tutorial Design By Contract - Rizky Septian";
         SayaTubeVideo myVideo = new SayaTubeVideo(videoTitle);
 
-        myVideo.IncreasePlayCount(1);
+        try
+        {
+            myVideo.IncreasePlayCount(100000000);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine("ArgumentException: " + ex.Message);
+        }
+
+        for (int i = 0; i < 5; i++)
+        {
+            myVideo.IncreasePlayCount(2000000);
+        }
 
         myVideo.PrintVideoDetails();
     }
